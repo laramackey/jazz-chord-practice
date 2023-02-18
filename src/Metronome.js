@@ -1,31 +1,32 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import "./metronome.css";
 import context from "./context";
 
 const Metronome = (props) => {
     const { audioContext } = useContext(context);
-    const [tempo, setTempo] = useState(120);
     const [isRunning, setIsRunning] = useState(false);
     const [intervalId, setIntervalId] = useState(null);
-    let nextNoteTime = 0.0
-    let currentBeatInBar = 0
+    const [_, setFlush] = useState(0);
+    const tempo = useRef(120);
+    const nextNoteTime = useRef(0.0)
+    const currentBeatInBar = useRef(0)
     const lookahead = 25;
     const scheduleAheadTime = 0.1;
     const beatsPerBar = 4;
 
     const handleInputChange = (event) => {
-        setTempo(event.target.value)
+        tempo.current = event.target.value;
+        setFlush(_ + 1);
     };
 
     const nextNote = () => {
-        console.log(tempo)
-        const secondsPerBeat = 60.0 / tempo;
-        nextNoteTime = nextNoteTime + secondsPerBeat
-        currentBeatInBar++
-        if (currentBeatInBar === beatsPerBar) {
-            currentBeatInBar = 0
+        const secondsPerBeat = 60.0 / tempo.current;
+        nextNoteTime.current = nextNoteTime.current + secondsPerBeat
+        currentBeatInBar.current = currentBeatInBar.current + 1
+        if (currentBeatInBar.current === beatsPerBar) {
+            currentBeatInBar.current = 0
         }
-        if (currentBeatInBar === 1) {
+        if (currentBeatInBar.current === 1) {
             props.setChangeChord(true)
         }
     }
@@ -46,8 +47,8 @@ const Metronome = (props) => {
     }
 
     const scheduler = () => {
-        while (nextNoteTime < audioContext.currentTime + scheduleAheadTime) {
-            scheduleNote(currentBeatInBar, nextNoteTime);
+        while (nextNoteTime.current < audioContext.currentTime + scheduleAheadTime) {
+            scheduleNote(currentBeatInBar.current, nextNoteTime.current);
             nextNote();
         }
     }
@@ -57,8 +58,8 @@ const Metronome = (props) => {
 
         setIsRunning(true);
 
-        currentBeatInBar = 0;
-        nextNoteTime = audioContext.currentTime + 0.05;
+        currentBeatInBar.current = 0;
+        nextNoteTime.current = audioContext.currentTime + 0.05;
 
         setIntervalId(setInterval(() => scheduler(), lookahead));
     }
@@ -81,12 +82,12 @@ const Metronome = (props) => {
     return (
         <div className="metronome">
             <div className="bpm-slider">
-                <p>{tempo} BPM</p>
+                <p>{tempo.current} BPM</p>
                 <input
                     type="range"
                     min="40"
                     max="240"
-                    value={tempo}
+                    value={tempo.current}
                     onChange={handleInputChange}
                 />
             </div>

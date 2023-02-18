@@ -19,7 +19,6 @@ const ChordSymbol = (props) => {
         generateRandomChord()
     }, [props.changeChord]);
 
-    console.log(props.changeChord)
     return (
         <div className="chordsymbol">
             {chord}
