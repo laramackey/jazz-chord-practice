@@ -15,7 +15,6 @@ const Metronome = (props) => {
 
     const handleInputChange = (event) => {
         setTempo(event.target.value)
-        console.log(event.target.value)
     };
 
     const nextNote = () => {
@@ -25,6 +24,9 @@ const Metronome = (props) => {
         currentBeatInBar++
         if (currentBeatInBar === beatsPerBar) {
             currentBeatInBar = 0
+        }
+        if (currentBeatInBar === 1) {
+            props.setChangeChord(true)
         }
     }
 
@@ -82,7 +84,7 @@ const Metronome = (props) => {
                 <p>{tempo} BPM</p>
                 <input
                     type="range"
-                    min="60"
+                    min="40"
                     max="240"
                     value={tempo}
                     onChange={handleInputChange}

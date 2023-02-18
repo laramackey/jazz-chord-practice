@@ -3,14 +3,15 @@
     max-width: 375px;
     margin: 0 auto;
     padding: 30px;
-  }
-  
-  .bpm-slider input {
+    font-size: 1.5em;
+}
+
+.bpm-slider input {
     width: 100%;
     margin: 10px;
-  }
-  
-  .metronome button {
+}
+
+.metronome button {
     background: #c94d46;
     padding: 10px;
     border: 1px solid #832420;
@@ -18,5 +19,4 @@
     width: 100px;
     color: #fff;
     font-size: 18px;
-  }
-  
+}
