@@ -1,67 +1,94 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import "./metronome.css";
-
-const click1Source = "//daveceddia.com/freebies/react-metronome/click1.wav";
-const click2Source = "//daveceddia.com/freebies/react-metronome/click2.wav";
+import context from "./context";
 
 const Metronome = (props) => {
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [count, setCount] = useState(0);
-    const [bpm, setBpm] = useState(100);
-    const [beatsPerMeasure, setBeatsPerMeasure] = useState(4);
-    const [timer, setTimer] = useState(null)
-
-    const click1 = new Audio(click1Source);
-    const click2 = new Audio(click2Source);
+    const { audioContext } = useContext(context);
+    const [tempo, setTempo] = useState(120);
+    const [isRunning, setIsRunning] = useState(false);
+    const [intervalId, setIntervalId] = useState(null);
+    let nextNoteTime = 0.0
+    let currentBeatInBar = 0
+    const lookahead = 25;
+    const scheduleAheadTime = 0.1;
+    const beatsPerBar = 4;
 
     const handleInputChange = (event) => {
-        const bpm = event.target.value;
-
-        if (isPlaying) {
-            clearInterval(timer);
-            setTimer(setInterval(this.playClick, (60 / bpm) * 1000));
-            setCount(0)
-        }
-        setBpm(bpm)
+        setTempo(event.target.value)
+        console.log(event.target.value)
     };
 
-    const playClick = () => {
-        if (count % beatsPerMeasure === 0) {
-            click2.play();
-        } else {
-            click1.play();
+    const nextNote = () => {
+        console.log(tempo)
+        const secondsPerBeat = 60.0 / tempo;
+        nextNoteTime = nextNoteTime + secondsPerBeat
+        currentBeatInBar++
+        if (currentBeatInBar === beatsPerBar) {
+            currentBeatInBar = 0
         }
+    }
 
-        setCount((count + 1) % beatsPerMeasure)
-    };
+    const scheduleNote = (beatNumber, time) => {
+        const osc = audioContext.createOscillator();
+        const envelope = audioContext.createGain();
+
+        osc.frequency.value = (beatNumber % beatsPerBar === 0) ? 1000 : 800;
+        envelope.gain.value = 1;
+        envelope.gain.exponentialRampToValueAtTime(1, time + 0.001);
+        envelope.gain.exponentialRampToValueAtTime(0.001, time + 0.02);
+
+        osc.connect(envelope);
+        envelope.connect(audioContext.destination);
+        osc.start(time);
+        osc.stop(time + 0.03);
+    }
+
+    const scheduler = () => {
+        while (nextNoteTime < audioContext.currentTime + scheduleAheadTime) {
+            scheduleNote(currentBeatInBar, nextNoteTime);
+            nextNote();
+        }
+    }
+
+    const start = () => {
+        if (isRunning) return;
+
+        setIsRunning(true);
+
+        currentBeatInBar = 0;
+        nextNoteTime = audioContext.currentTime + 0.05;
+
+        setIntervalId(setInterval(() => scheduler(), lookahead));
+    }
+
+    const stop = () => {
+        setIsRunning(false);
+
+        clearInterval(intervalId);
+    }
 
     const startStop = () => {
-        console.log({ isPlaying })
-        if (isPlaying) {
-            clearInterval(timer);
-            setIsPlaying(false)
-            console.log(timer)
-        } else {
-            setTimer(setInterval(playClick, (60 / bpm) * 1000));
-            setCount(0)
-            setIsPlaying(true)
-            playClick()
+        if (isRunning) {
+            stop();
         }
-    };
+        else {
+            start();
+        }
+    }
 
     return (
         <div className="metronome">
             <div className="bpm-slider">
-                <p>{bpm} BPM</p>
+                <p>{tempo} BPM</p>
                 <input
                     type="range"
                     min="60"
                     max="240"
-                    value={bpm}
+                    value={tempo}
                     onChange={handleInputChange}
                 />
             </div>
-            <button onClick={startStop}>{isPlaying ? "Stop" : "Start"}</button>
+            <button onClick={startStop}>{isRunning ? "Stop" : "Start"}</button>
         </div>
     );
 }
