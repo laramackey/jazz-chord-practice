@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import "./chordsymbol.css";
 
 const ChordSymbol = (props) => {
-    const [chord, setChord] = useState("C7 root position")
     const generateRandomChord = () => {
         const randomElement = (arr) => arr[Math.floor(Math.random() * arr.length)]
         const rootNotes = ["A♭", "A", "B♭", "B", "C", "D♭", "D", "E♭", "E", "F", "F♯", "G♭", "G",]
@@ -11,17 +10,24 @@ const ChordSymbol = (props) => {
         const randomRootNote = randomElement(rootNotes)
         const randomChord = randomElement(chords)
         const randomInversion = randomElement(inversions)
-        setChord(`${randomRootNote}${randomChord} ${randomInversion}`)
+        return `${randomRootNote}${randomChord} ${randomInversion}`
     }
+    const [currentChord, setCurrentChord] = useState("")
+    const [upcomingChord, setUpcomingChord] = useState("")
 
     useEffect(() => {
-        props.setChangeChord(false)
-        generateRandomChord()
+        if (props.changeChord) {
+            props.setChangeChord(false)
+            console.log(upcomingChord)
+            setCurrentChord(upcomingChord)
+            setUpcomingChord(generateRandomChord())
+        }
     }, [props.changeChord]);
 
     return (
         <div className="chordsymbol">
-            {chord}
+            <p className="current">{currentChord}</p>
+            <p className="upcoming">{upcomingChord}</p>
         </div>
     );
 }
