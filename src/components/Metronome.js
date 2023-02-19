@@ -1,6 +1,6 @@
 import React, { useState, useContext, useRef } from "react";
 import "./metronome.css";
-import context from "./context";
+import context from "../context";
 
 const Metronome = (props) => {
     const { audioContext } = useContext(context);
