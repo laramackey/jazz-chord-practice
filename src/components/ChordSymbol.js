@@ -1,21 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./chordsymbol.css";
+import { rootNotes } from "../chords";
 
 const ChordSymbol = (props) => {
-    const rootNotes = [
-        "A♭",
-        "A",
-        "B♭",
-        "B",
-        "C",
-        "D♭",
-        "D",
-        "E♭",
-        "E",
-        "F",
-        "G♭",
-        "G",
-    ];
     const chords = {
         7: [0, 4, 7, 10],
         6: [0, 4, 7, 9],
@@ -70,7 +57,7 @@ const ChordSymbol = (props) => {
     useEffect(() => {
         if (props.changeChord) {
             props.setChangeChord(false);
-            console.log(upcomingChord?.notesInChord);
+            props.setCorrectChord(upcomingChord?.notesInChord);
             setCurrentChord(upcomingChord);
             setUpcomingChord(generateRandomChord());
         }
