@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import "./App.css";
 import ChordSymbol from "./components/ChordSymbol";
 import Metronome from "./components/Metronome";
-import Midi from "./components/Midi";
 import ChordChecker from "./components/ChordChecker";
 import Settings from "./components/Settings";
 import { chords } from "./chords";
@@ -18,12 +17,12 @@ function App() {
     const [includeInversions, setIncludeInversions] = useState(true);
     return (
         <div className="App">
-            <Midi setPlayingChord={setPlayingChord} />
             <Settings
                 setIncludedChords={setIncludedChords}
                 includedChords={includedChords}
                 includeInversions={includeInversions}
                 setIncludeInversions={setIncludeInversions}
+                setPlayingChord={setPlayingChord}
             />
             <Metronome setChangeChord={setChangeChord} />
             <ChordSymbol

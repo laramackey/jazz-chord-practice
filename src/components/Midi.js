@@ -74,12 +74,15 @@ const Midi = (props) => {
         setSelectedOption({ value: selected.name, label: selected.name });
     };
     return (
-        <Select
-            options={options}
-            placeholder="Select midi device"
-            onChange={handleMidiSelectChange}
-            value={selectedOption}
-        />
+        <div style={{ "border-style": "solid", float: "left", width: "33%" }}>
+            Midi Device:
+            <Select
+                options={options}
+                placeholder="Select midi device"
+                onChange={handleMidiSelectChange}
+                value={selectedOption}
+            />
+        </div>
     );
 };
 

@@ -8,7 +8,14 @@ export const IncludeInversionsSelector = (props) => {
     };
 
     return (
-        <div style={{ "border-style": "solid" }}>
+        <div
+            style={{
+                "border-style": "solid",
+                "border-style": "solid",
+                float: "left",
+                width: "33%",
+            }}
+        >
             Chord Inversions:
             <div className="checkbox-container">
                 <input

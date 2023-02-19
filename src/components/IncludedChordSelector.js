@@ -17,7 +17,7 @@ export const IncludedChordsSelector = (props) => {
     };
 
     return (
-        <div style={{ "border-style": "solid" }}>
+        <div style={{ "border-style": "solid", float: "left", width: "33%" }}>
             Included Chords:
             {chords.map((item, index) => {
                 return (
