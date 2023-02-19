@@ -2,23 +2,50 @@ import React, { useState, useEffect } from 'react';
 import "./chordsymbol.css";
 
 const ChordSymbol = (props) => {
+    const rootNotes = ["A♭", "A", "B♭", "B", "C", "D♭", "D", "E♭", "E", "F", "G♭", "G",]
+    const chords = {
+        "7": [0, 4, 7, 10],
+        "6": [0, 4, 7, 9],
+        "Δ": [0, 4, 7, 11],
+        "m7": [0, 3, 7, 10],
+    }
+    const inversions = ["root position", "first inversion", "second inversion", "third inversion"]
+
+    const getNotesInChord = (rootNote, chordSymbol, inversion) => {
+        const rootNoteIndex = rootNotes.indexOf(rootNote)
+        const notePositions = chords[chordSymbol]
+        const notesInChord = notePositions.map(position => {
+            const i = rootNoteIndex + position;
+            const n = rootNotes.length
+            return rootNotes[(i % n + n) % n]
+        })
+        const rotationAmount = inversions.indexOf(inversion)
+        return notesInChord.concat(notesInChord).slice(rotationAmount, rotationAmount + notesInChord.length);
+    }
     const generateRandomChord = () => {
         const randomElement = (arr) => arr[Math.floor(Math.random() * arr.length)]
-        const rootNotes = ["A♭", "A", "B♭", "B", "C", "D♭", "D", "E♭", "E", "F", "F♯", "G♭", "G",]
-        const chords = ["7", "6", "Δ", "m7"]
-        const inversions = ["root position", "first inversion", "second inversion", "third inversion"]
+        const chordSymbols = Object.keys(chords)
         const randomRootNote = randomElement(rootNotes)
-        const randomChord = randomElement(chords)
+        const randomChordSymbol = randomElement(chordSymbols)
         const randomInversion = randomElement(inversions)
-        return `${randomRootNote}${randomChord} ${randomInversion}`
+        return {
+            rootNote: randomRootNote,
+            chordSymbol: randomChordSymbol,
+            inversion: randomInversion,
+            notesInChord: getNotesInChord(randomRootNote, randomChordSymbol, randomInversion)
+        }
     }
-    const [currentChord, setCurrentChord] = useState("")
-    const [upcomingChord, setUpcomingChord] = useState("")
+
+    const chordToString = (chord) => {
+        return `${chord.rootNote}${chord.chordSymbol} ${chord.inversion}`
+    }
+    const [currentChord, setCurrentChord] = useState(null)
+    const [upcomingChord, setUpcomingChord] = useState(null)
 
     useEffect(() => {
         if (props.changeChord) {
             props.setChangeChord(false)
-            console.log(upcomingChord)
+            console.log(upcomingChord?.notesInChord)
             setCurrentChord(upcomingChord)
             setUpcomingChord(generateRandomChord())
         }
@@ -26,8 +53,8 @@ const ChordSymbol = (props) => {
 
     return (
         <div className="chordsymbol">
-            <p className="current">{currentChord}</p>
-            <p className="upcoming">{upcomingChord}</p>
+            <p className="current">{currentChord ? chordToString(currentChord) : ""}</p>
+            <p className="upcoming">{upcomingChord ? chordToString(upcomingChord) : ""}</p>
         </div>
     );
 }
