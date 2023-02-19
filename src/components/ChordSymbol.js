@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./chordsymbol.css";
-import { rootNotes } from "../chords";
+import { rootNotes, chords } from "../chords";
 
 const ChordSymbol = (props) => {
-    const chords = {
-        7: [0, 4, 7, 10],
-        6: [0, 4, 7, 9],
-        Δ: [0, 4, 7, 11],
-        m7: [0, 3, 7, 10],
-    };
     const inversions = [
         "root position",
         "first inversion",
@@ -18,7 +12,9 @@ const ChordSymbol = (props) => {
 
     const getNotesInChord = (rootNote, chordSymbol, inversion) => {
         const rootNoteIndex = rootNotes.indexOf(rootNote);
-        const notePositions = chords[chordSymbol];
+        const notePositions = chords.find(
+            (symbol) => symbol.id === chordSymbol
+        ).includedNotes;
         const notesInChord = notePositions.map((position) => {
             const i = rootNoteIndex + position;
             const n = rootNotes.length;
@@ -32,7 +28,9 @@ const ChordSymbol = (props) => {
     const generateRandomChord = () => {
         const randomElement = (arr) =>
             arr[Math.floor(Math.random() * arr.length)];
-        const chordSymbols = Object.keys(chords);
+        const chordSymbols = chords
+            .filter((c) => props.includedChords.includes(c.id))
+            .map((c) => c.id);
         const randomRootNote = randomElement(rootNotes);
         const randomChordSymbol = randomElement(chordSymbols);
         const randomInversion = randomElement(inversions);

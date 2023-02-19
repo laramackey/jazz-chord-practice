@@ -40,7 +40,6 @@ const Midi = (props) => {
             const playingChord = currentChord.current
                 .sort()
                 .map((n) => rootNotes[n % 12]);
-            console.dir(playingChord);
             props.setPlayingChord(playingChord);
         }
     };

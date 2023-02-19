@@ -17,8 +17,6 @@ const ChordChecker = (props) => {
     }, [correctChord]);
     useEffect(() => {
         if (correctChord?.length && playingChord?.length) {
-            console.dir({ correctChord });
-            console.dir({ playingChord });
             if (chordEquality(correctChord, playingChord)) {
                 setMessage("CORRECT ✔✔✔");
             } else {
