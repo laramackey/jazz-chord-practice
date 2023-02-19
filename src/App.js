@@ -15,23 +15,28 @@ function App() {
     const [includedChords, setIncludedChords] = useState(
         chords.filter((c) => c.defaultChecked).map((c) => c.id)
     );
+    const [includeInversions, setIncludeInversions] = useState(true);
     return (
         <div className="App">
+            <Midi setPlayingChord={setPlayingChord} />
             <Settings
                 setIncludedChords={setIncludedChords}
                 includedChords={includedChords}
+                includeInversions={includeInversions}
+                setIncludeInversions={setIncludeInversions}
             />
-            <Midi setPlayingChord={setPlayingChord} />
             <Metronome setChangeChord={setChangeChord} />
             <ChordSymbol
                 setChangeChord={setChangeChord}
                 changeChord={changeChord}
                 setCorrectChord={setCorrectChord}
                 includedChords={includedChords}
+                includeInversions={includeInversions}
             />
             <ChordChecker
                 correctChord={correctChord}
                 playingChord={playingChord}
+                includeInversions={includeInversions}
             />
         </div>
     );

@@ -47,7 +47,9 @@ const ChordSymbol = (props) => {
     };
 
     const chordToString = (chord) => {
-        return `${chord.rootNote}${chord.chordSymbol} ${chord.inversion}`;
+        return `${chord.rootNote}${chord.chordSymbol}${
+            props.includeInversions ? " " + chord.inversion : ""
+        }`;
     };
     const [currentChord, setCurrentChord] = useState(null);
     const [upcomingChord, setUpcomingChord] = useState(null);

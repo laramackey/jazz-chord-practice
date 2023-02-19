@@ -2,14 +2,18 @@ import React, { useState, useEffect } from "react";
 import "./chordchecker.css";
 
 const ChordChecker = (props) => {
-    const { correctChord, playingChord } = props;
+    const { correctChord, playingChord, includeInversions } = props;
     const [message, setMessage] = useState("");
     const chordEquality = (a, b) => {
+        let chordA = a;
+        let chordB = b;
+        if (!includeInversions) {
+            chordA = a.sort();
+            chordB = b.sort();
+        }
         return (
-            Array.isArray(a) &&
-            Array.isArray(b) &&
-            a.length === b.length &&
-            a.every((val, index) => val === b[index])
+            chordA.length === chordB.length &&
+            chordA.every((val, index) => val === chordB[index])
         );
     };
     useEffect(() => {
