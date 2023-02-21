@@ -3,12 +3,7 @@ import "./chordsymbol.css";
 import { rootNotes, chords } from "../chords";
 
 const ChordSymbol = (props) => {
-    const inversions = [
-        "root position",
-        "first inversion",
-        "second inversion",
-        "third inversion",
-    ];
+    const inversions = [0, 1, 2, 3];
 
     const getNotesInChord = (rootNote, chordSymbol, inversion) => {
         const rootNoteIndex = rootNotes.indexOf(rootNote);
@@ -46,10 +41,30 @@ const ChordSymbol = (props) => {
         };
     };
 
+    const mapFlatToSharp = (rootNote, bottomNote, isMinor) => {
+        const rootKey = isMinor ? rootNote + "m" : rootNote;
+        const sharpSignatures = ["C", "D", "E", "Em", "G", "A", "B", "Bm"];
+        if (bottomNote.includes("♭") && sharpSignatures.includes(rootKey)) {
+            const flatToSharp = {
+                "D♭": "C#",
+                "E♭": "D#",
+                "G♭": "F#",
+                "A♭": "G#",
+                "B♭": "A#",
+            };
+            return flatToSharp[bottomNote];
+        }
+        return bottomNote;
+    };
+
     const chordToString = (chord) => {
-        return `${chord.rootNote}${chord.chordSymbol}${
-            props.includeInversions ? " " + chord.inversion : ""
-        }`;
+        const { rootNote, chordSymbol, notesInChord, inversion } = chord;
+        const isMinor = chordSymbol.includes("m");
+        const bottomNote =
+            props.includeInversions && chord.inversion
+                ? `/${mapFlatToSharp(rootNote, notesInChord[0], isMinor)}`
+                : "";
+        return `${rootNote}${chordSymbol}${bottomNote}`;
     };
     const [currentChord, setCurrentChord] = useState(null);
     const [upcomingChord, setUpcomingChord] = useState(null);
